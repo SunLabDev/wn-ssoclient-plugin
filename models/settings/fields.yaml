@@ -1,0 +1,11 @@
+# ===================================
+#  Form Field Definitions
+# ===================================
+
+fields:
+    provider_url:
+        label: provider_url
+
+    secret:
+        label: secret
+        type: sensitive
