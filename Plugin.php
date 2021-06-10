@@ -99,7 +99,7 @@ class Plugin extends PluginBase
                     $providerUrlField->value = $response['provider_url'];
 
                     $secretField = $formWidget->getField('secret');
-                    $providerUrlField->value = $response['secret'];
+                    $secretField->value = $response['secret'];
 
                     return [
                         '#Form-field-Settings-provider_url-group' =>
