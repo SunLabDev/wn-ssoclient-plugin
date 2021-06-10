@@ -11,7 +11,7 @@ class Settings extends Model
 
     public $rules = [];
 
-    public $implement = ['System.Behaviors.SettingsModel'];
+    public $implement = [\System\Behaviors\SettingsModel::class];
 
     public $settingsCode = 'sunlab_ssoclient_settings';
 

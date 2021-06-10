@@ -1,8 +1,15 @@
 <?php namespace SunLab\SSOClient;
 
 use Backend;
+use Cms\Classes\Page;
+use Illuminate\Support\Facades\Request;
 use SunLab\SSOClient\Models\Settings;
 use System\Classes\PluginBase;
+use Validator;
+use Winter\Storm\Exception\ValidationException;
+use Winter\Storm\Support\Facades\Flash;
+use Winter\Storm\Support\Facades\Http;
+use Winter\Storm\Support\Facades\Str;
 
 /**
  * SSOClient Plugin Information File
@@ -31,7 +38,6 @@ class Plugin extends PluginBase
      */
     public function register()
     {
-
     }
 
     /**
@@ -41,7 +47,73 @@ class Plugin extends PluginBase
      */
     public function boot()
     {
+        \System\Controllers\Settings::extend(function (\System\Controllers\Settings $controller) {
+            if (url()->current() === Backend\Facades\Backend::url('system/settings')) {
+                return;
+            }
 
+            if ($controller->formGetWidget()->model instanceof \SunLab\SSOClient\Models\Settings) {
+                $controller->addDynamicMethod('onGetSecretKey', static function () use ($controller) {
+                    $host = post('Settings[provider_host]');
+
+                    $validator = Validator::make(
+                        ['host' => $host],
+                        ['host' => 'required|url']
+                    );
+
+                    throw_if(
+                        $validator->fails(),
+                        new ValidationException($validator)
+                    );
+
+                    $callback_url = Page::url(post('Settings[login_page]'));
+                    $req = Http::put(
+                        sprintf('%s/sunlab_sso/client', $host),
+                        static function ($http) use ($callback_url) {
+                            $http->data([
+                                'name' => config('app.name'),
+                                'callback_url' => $callback_url
+                            ]);
+                        }
+                    );
+
+                    if (!$req->ok && $req->code !== 406) {
+                        Flash::error(__('sunlab.ssoclient::lang.errors.unable_to_reach_provider'));
+                        return;
+                    }
+
+                    $response = json_decode($req->body, true);
+                    if ($req->code === 406) {
+                        Flash::warning(__('sunlab.ssoclient::lang.errors.err_n_' . $response['err_n']));
+                        return;
+                    }
+
+                    if (!isset($response['provider_url'], $response['secret'])) {
+                        Flash::error(__('sunlab.ssoclient::lang.errors.unknown_error'));
+                        return;
+                    }
+
+                    $formWidget = $controller->formGetWidget();
+
+                    $providerUrlField = $formWidget->getField('provider_url');
+                    $providerUrlField->value = $response['provider_url'];
+
+                    $secretField = $formWidget->getField('secret');
+                    $providerUrlField->value = $response['secret'];
+
+                    return [
+                        '#Form-field-Settings-provider_url-group' =>
+                            $controller->formGetWidget()->makePartial('~/modules/backend/widgets/form/partials/_field.htm', [
+                                'field' => $providerUrlField
+                            ]),
+                        '#Form-field-Settings-secret-group' =>
+                            $controller->formGetWidget()->makePartial('~/modules/backend/widgets/form/partials/_field.htm', [
+                                'field' => $secretField
+                            ])
+                    ];
+                });
+            }
+        });
     }
 
     /**
@@ -69,26 +141,6 @@ class Plugin extends PluginBase
             'sunlab.ssoclient.some_permission' => [
                 'tab' => 'SSOClient',
                 'label' => 'Some permission'
-            ],
-        ];
-    }
-
-    /**
-     * Registers back-end navigation items for this plugin.
-     *
-     * @return array
-     */
-    public function registerNavigation()
-    {
-        return []; // Remove this line to activate
-
-        return [
-            'ssoclient' => [
-                'label'       => 'SSOClient',
-                'url'         => Backend::url('sunlab/ssoclient/mycontroller'),
-                'icon'        => 'icon-leaf',
-                'permissions' => ['sunlab.ssoclient.*'],
-                'order'       => 500,
             ],
         ];
     }

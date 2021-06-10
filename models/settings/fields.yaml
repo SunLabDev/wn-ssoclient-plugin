@@ -1,11 +1,34 @@
-# ===================================
-#  Form Field Definitions
-# ===================================
-
 fields:
+    is_active:
+        label: sunlab.ssoclient::lang.fields.is_active
+        type: switch
+        span: left
+
+    provider_host:
+        label: sunlab.ssoclient::lang.fields.provider_host
+        placeholder: https://wintercms.com
+        span: left
+
+    login_page:
+        label: sunlab.ssoclient::lang.fields.login_page
+        type: dropdown
+        span: auto
+        options: \SunLab\SSOClient\Helpers\FormHelper::loginPageOptions
+
     provider_url:
-        label: provider_url
+        label: sunlab.ssoclient::lang.fields.provider_url
+        span: left
+        readOnly: true
+        dependsOn: _get_secret_key
+
+    _get_secret_key:
+        label: sunlab.ssoclient::lang.fields.get_secret_key
+        type: partial
+        path: $/sunlab/ssoclient/models/settings/provider_host_button.htm
+        span: right
 
     secret:
-        label: secret
+        label: sunlab.ssoclient::lang.fields.secret
         type: sensitive
+        span: left
+        dependsOn: _get_secret_key
