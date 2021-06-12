@@ -58,4 +58,6 @@ fields:
         comment: sunlab.ssoclient::lang.fields.splash_image_comment
         type: fileupload
         attachOnUpload: true
+        imageHeight: 500
+        imageWidth: 500
         span: right
