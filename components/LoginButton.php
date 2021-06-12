@@ -34,7 +34,7 @@ class LoginButton extends ComponentBase
 
                 Auth::login($user);
             } catch (JWTException $e) {
-                Flash::error('An error occurred');
+                Flash::error('sunlab.ssoclient::lang.errors.unknown');
             }
         }
 
@@ -44,8 +44,8 @@ class LoginButton extends ComponentBase
     public function componentDetails()
     {
         return [
-            'name'        => 'LoginButton Component',
-            'description' => 'No description provided yet...'
+            'name'        => 'sunlab.ssoclient::lang.components.login_button.name',
+            'description' => 'sunlab.ssoclient::lang.components.login_button.desc'
         ];
     }
 

@@ -24,10 +24,10 @@ class Plugin extends PluginBase
     public function pluginDetails()
     {
         return [
-            'name'        => 'SSOClient',
-            'description' => 'No description provided yet...',
+            'name'        => 'sunlab.ssoclient::lang.plugin.name',
+            'description' => 'sunlab.ssoclient::lang.plugin.desc',
             'author'      => 'SunLab',
-            'icon'        => 'icon-leaf'
+            'icon'        => 'icon-key'
         ];
     }
 
@@ -89,7 +89,7 @@ class Plugin extends PluginBase
                     }
 
                     if (!isset($response['provider_url'], $response['secret'])) {
-                        Flash::error(__('sunlab.ssoclient::lang.errors.unknown_error'));
+                        Flash::error(__('sunlab.ssoclient::lang.errors.unknown'));
                         return;
                     }
 
@@ -118,12 +118,10 @@ class Plugin extends PluginBase
      */
     public function registerPermissions()
     {
-        return []; // Remove this line to activate
-
         return [
-            'sunlab.ssoclient.some_permission' => [
-                'tab' => 'SSOClient',
-                'label' => 'Some permission'
+            'sunlab.ssoclient.settings' => [
+                'tab' => 'sunlab.ssoclient::lang.plugin.name',
+                'label' => 'sunlab.ssoclient::lang.permissions.settings'
             ],
         ];
     }
@@ -132,10 +130,10 @@ class Plugin extends PluginBase
     {
         return [
             'settings' => [
-                'label'       => 'sunlab.ssoclient::lang.settings.page_name',
-                'description' => 'sunlab.ssoclient::lang.settings.page_desc',
+                'label'       => 'sunlab.ssoclient::lang.settings.label',
+                'description' => 'sunlab.ssoclient::lang.settings.desc',
                 'category'    => 'sunlab.ssoclient::lang.plugin.name',
-                'icon'        => 'oc-icon-key',
+                'icon'        => 'icon-key',
                 'class'       => Settings::class,
                 'order'       => 500,
                 'permissions' => ['sunlab.ssoclient.settings']
