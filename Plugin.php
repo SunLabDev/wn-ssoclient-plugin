@@ -72,7 +72,7 @@ class Plugin extends PluginBase
                         $binding->where([
                                     ['master_type', '=', get_class($model)],
                                     ['session_key', '=', $sessionKey],
-                                    ['is_bind', '=', 'true']
+                                    ['is_bind', '=', 1]
                                 ])
                                 ->first();
 
