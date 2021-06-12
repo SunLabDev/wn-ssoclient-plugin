@@ -93,24 +93,7 @@ class Plugin extends PluginBase
                         return;
                     }
 
-                    $formWidget = $controller->formGetWidget();
-
-                    $providerUrlField = $formWidget->getField('provider_url');
-                    $providerUrlField->value = $response['provider_url'];
-
-                    $secretField = $formWidget->getField('secret');
-                    $secretField->value = $response['secret'];
-
-                    return [
-                        '#Form-field-Settings-provider_url-group' =>
-                            $controller->formGetWidget()->makePartial('~/modules/backend/widgets/form/partials/_field.htm', [
-                                'field' => $providerUrlField
-                            ]),
-                        '#Form-field-Settings-secret-group' =>
-                            $controller->formGetWidget()->makePartial('~/modules/backend/widgets/form/partials/_field.htm', [
-                                'field' => $secretField
-                            ])
-                    ];
+                    return json_encode($response);
                 });
             }
         });

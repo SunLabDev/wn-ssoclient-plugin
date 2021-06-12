@@ -1,7 +1,24 @@
+<script>
+    function callProvider() {
+        $('form').request('onGetSecretKey', {
+            success: function(data) {
+                let sensitiveInput = $('#Sensitive-formSecret-secret');
+                let result = JSON.parse(data.result);
+                $('#Form-field-Settings-provider_url').val(result.provider_url);
+
+                // Fire a keydown event to make the form field dirty
+                let e = jQuery.Event("keydown");
+                sensitiveInput.trigger(e)
+                sensitiveInput.val(result.secret);
+
+                this.success(data)
+            }
+        });
+    }
+</script>
 <div>
     <button type="button"
             class="btn btn-primary"
-            data-request="onGetSecretKey"
-            data-request-flash
+            onclick="callProvider()"
     ><?= __('sunlab.ssoclient::lang.get_secret_key')?></button>
 </div>
