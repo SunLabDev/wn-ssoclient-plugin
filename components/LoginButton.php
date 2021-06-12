@@ -1,9 +1,10 @@
 <?php namespace SunLab\SSOClient\Components;
 
 use Cms\Classes\ComponentBase;
+use Firebase\JWT\ExpiredException;
 use Firebase\JWT\JWT;
+use Illuminate\Support\Facades\Request;
 use SunLab\SSOClient\Models\Settings;
-use Tymon\JWTAuth\Exceptions\JWTException;
 use Winter\Storm\Support\Facades\Flash;
 use Winter\Storm\Support\Facades\Str;
 use Winter\User\Facades\Auth;
@@ -17,9 +18,9 @@ class LoginButton extends ComponentBase
     public function init()
     {
         $settings = Settings::instance();
-
-        if ($token = $this->param($settings->token_url_param)) {
+        if (Request::has($settings->token_url_param)) {
             try {
+                $token = Request::get($settings->token_url_param);
                 $data = (array)JWT::decode($token, $settings->secret, ['HS256']);
 
                 $user = User::query()->firstWhere('email', $data['email']);
@@ -34,8 +35,9 @@ class LoginButton extends ComponentBase
                 }
 
                 Auth::login($user);
-            } catch (JWTException $e) {
-                Flash::error('sunlab.ssoclient::lang.errors.unknown');
+            } catch (ExpiredException $e) {
+                Flash::error(__('sunlab.ssoclient::lang.errors.expired_session'));
+                return;
             }
         }
 
