@@ -30,9 +30,17 @@
         'get_client_credentials' => '',
         'get_client_credentials_comment' => 'Demandera vos identifiants unique au fournisseur.',
         'provider_url' => "Url du fournisseur",
-        'provider_url_comment' => 'Transmis par le fournisseur',
+        'provider_url_comment' => 'Transmis par le fournisseur.',
+        'token_url_param' => "Paramètre du token dans l'url",
+        'token_url_param_comment' => 'Transmis par le fournisseur.',
         'secret' => 'Clé secrète',
-        'secret_comment' => 'Transmis par le fournisseur'
+        'secret_comment' => 'Transmis par le fournisseur.',
+        'design_section' => "Apparence de la page d'autorisation",
+        'design_section_comment' => "Customiser votre page d'autorisation côté fournisseur",
+        'name' => 'Nom',
+        'name_comment' => 'Sera affiché comme ceci: {{ name }} veut accéder à vos informations.',
+        'splash_image' => 'Image de présentation',
+        'splash_image_comment' => "Sera affichée sur votre page d'autorisation"
     ],
 
     'get_client_credentials' => "Obtenir des identifiants",
@@ -41,5 +49,6 @@
         'unknown' => 'Une erreur est survenue.',
         'err_n_1' => "Le fournisseur SSO n'est pas encore configuré.",
         'err_n_2' => "Le fournisseur SSO n'accepte pas de nouveaux clients.",
+        'expired_session' => 'Cette session a expirée.'
     ]
 ];
