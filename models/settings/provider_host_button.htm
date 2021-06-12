@@ -2,9 +2,15 @@
     function callProvider() {
         $('form').request('onGetSecretKey', {
             success: function(data) {
+                if (data['#layout-flash-messages']) {
+                    this.success(data);
+                    return;
+                }
+
                 let sensitiveInput = $('#Sensitive-formSecret-secret');
                 let result = JSON.parse(data.result);
                 $('#Form-field-Settings-provider_url').val(result.provider_url);
+                $('#Form-field-Settings-token_url_param').val(result.token_url_param);
 
                 // Fire a keydown event to make the form field dirty
                 let e = jQuery.Event("keydown");
@@ -16,6 +22,7 @@
         });
     }
 </script>
+
 <div>
     <button type="button"
             class="btn btn-primary"

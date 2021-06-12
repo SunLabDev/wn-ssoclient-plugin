@@ -11,15 +11,16 @@ use Winter\User\Models\User;
 
 class LoginButton extends ComponentBase
 {
-    public $providerUrl = null;
+    public $providerUrl;
+    public $isActive;
 
     public function init()
     {
-        $routeParameter = $this->property('paramCode');
+        $settings = Settings::instance();
 
-        if ($token = $this->param($routeParameter)) {
+        if ($token = $this->param($settings->token_url_param)) {
             try {
-                $data = (array)JWT::decode($token, Settings::instance()->get('secret'), ['HS256']);
+                $data = (array)JWT::decode($token, $settings->secret, ['HS256']);
 
                 $user = User::query()->firstWhere('email', $data['email']);
 
@@ -38,7 +39,8 @@ class LoginButton extends ComponentBase
             }
         }
 
-        $this->providerUrl = Settings::instance()->get('provider_url');
+        $this->isActive = $settings->is_active;
+        $this->providerUrl = $settings->provider_url;
     }
 
     public function componentDetails()
@@ -51,13 +53,6 @@ class LoginButton extends ComponentBase
 
     public function defineProperties()
     {
-        return [
-            'paramToken' => [
-                'title'       => 'sunlab.ssoclient::lang.login_button.token_param',
-                'description' => 'sunlab.ssoclient::lang.login_button.token_param_desc',
-                'type'        => 'string',
-                'default'     => 'code'
-            ]
-        ];
+        return [];
     }
 }

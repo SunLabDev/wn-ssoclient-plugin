@@ -23,7 +23,18 @@ fields:
         comment: sunlab.ssoclient::lang.fields.provider_url_comment
         span: left
         readOnly: true
-        dependsOn: _get_client_credentials
+
+    token_url_param:
+        label: sunlab.ssoclient::lang.fields.token_url_param
+        comment: sunlab.ssoclient::lang.fields.token_url_param_comment
+        span: right
+        readOnly: true
+
+    secret:
+        label: sunlab.ssoclient::lang.fields.secret
+        comment: sunlab.ssoclient::lang.fields.secret_comment
+        type: sensitive
+        span: left
 
     _get_client_credentials:
         label: sunlab.ssoclient::lang.fields.get_client_credentials
@@ -32,9 +43,19 @@ fields:
         path: $/sunlab/ssoclient/models/settings/provider_host_button.htm
         span: right
 
-    secret:
-        label: sunlab.ssoclient::lang.fields.secret
-        comment: sunlab.ssoclient::lang.fields.secret_comment
-        type: sensitive
+    _design_section:
+        type: section
+        label: sunlab.ssoclient::lang.fields.design_section
+        comment: sunlab.ssoclient::lang.fields.design_section_comment
+
+    name:
+        label: sunlab.ssoclient::lang.fields.name
+        comment: sunlab.ssoclient::lang.fields.name_comment
         span: left
-        dependsOn: _get_client_credentials
+
+    splash_image:
+        label: sunlab.ssoclient::lang.fields.splash_image
+        comment: sunlab.ssoclient::lang.fields.splash_image_comment
+        type: fileupload
+        attachOnUpload: true
+        span: right
