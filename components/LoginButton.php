@@ -18,6 +18,8 @@ class LoginButton extends ComponentBase
     public function init()
     {
         $settings = Settings::instance();
+
+        // If the request already contain the token, try to log-in the user
         if (Request::has($settings->token_url_param)) {
             try {
                 $token = Request::get($settings->token_url_param);
@@ -25,6 +27,7 @@ class LoginButton extends ComponentBase
 
                 $user = User::query()->firstWhere('email', $data['email']);
 
+                // If the email is unknown, create a User model
                 if (!$user) {
                     $password = Str::random(10);
 
@@ -35,7 +38,10 @@ class LoginButton extends ComponentBase
                 }
 
                 Auth::login($user);
-            } catch (ExpiredException $e) {
+            }
+
+            // Handle eventual JWToken expiration
+            catch (ExpiredException $e) {
                 Flash::error(__('sunlab.ssoclient::lang.errors.expired_session'));
                 return;
             }

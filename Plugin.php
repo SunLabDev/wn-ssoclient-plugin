@@ -2,7 +2,6 @@
 
 use Backend;
 use Cms\Classes\Page;
-use Illuminate\Support\Facades\Request;
 use SunLab\SSOClient\Models\Settings;
 use System\Classes\PluginBase;
 use Validator;
@@ -38,6 +37,7 @@ class Plugin extends PluginBase
      */
     public function boot()
     {
+        // Extends the SettingsController to add the AJAX Handler needed to get clients credentials
         \System\Controllers\Settings::extend(function (\System\Controllers\Settings $controller) {
             if (url()->current() === Backend\Facades\Backend::url('system/settings')) {
                 return;
@@ -49,6 +49,7 @@ class Plugin extends PluginBase
                 $controller->addDynamicMethod('onGetSecretKey', static function () use ($formWidget, $model) {
                     $host = post('Settings[provider_host]');
 
+                    // Make sure the admin provided an host, abort if not
                     $validator = Validator::make(
                         ['host' => $host],
                         ['host' => 'required|url']
@@ -59,9 +60,11 @@ class Plugin extends PluginBase
                         new ValidationException($validator)
                     );
 
-                    $callback_url = Page::url(post('Settings[login_page]'));
-
-                    // Get deferred splash_image, fallback to model's splash_image or leave null
+                    // Try to find an eventually provided splash_image:
+                    // Priority:
+                    // - get deferred splash image, for first saving or when modified
+                    // - fallback to model's splash image
+                    // - leave null, no splash image
                     $sessionKey = $formWidget->getSessionKey();
                     $binding = new DeferredBindingModel;
 
@@ -85,6 +88,8 @@ class Plugin extends PluginBase
                         $splash_image = $model->splash_image->getThumb('500', '500');
                     }
 
+                    // Build the callback URL
+                    $callback_url = Page::url(post('Settings[login_page]'));
                     $req = Http::put(
                         sprintf('%s/sunlab_sso/client', $host),
                         static function ($http) use ($callback_url, $splash_image) {
@@ -96,6 +101,9 @@ class Plugin extends PluginBase
                         }
                     );
 
+                    // Handle eventual errors
+
+                    // Provider can't be reached, 404 or plugin's not installed
                     if (!$req->ok && $req->code !== 406) {
                         Flash::error(__('sunlab.ssoclient::lang.errors.unable_to_reach_provider'));
                         return;
@@ -103,22 +111,32 @@ class Plugin extends PluginBase
 
                     $response = json_decode($req->body, true);
                     if ($req->code === 406) {
+                        // If the provider returned an error n°, display the message as a warning
                         if (isset($response['err_n'])) {
                             Flash::warning(__('sunlab.ssoclient::lang.errors.err_n_' . $response['err_n']));
-                        } elseif (isset($response['reason'])) {
+                        }
+
+                        // Else if the provider returned a error reason, display it as an error
+                        elseif (isset($response['reason'])) {
                             Flash::error($response['reason']);
-                        } else {
-                            Flash::error(__('sunlab.ssoclient::lang.errors.err_n_' . $response['err_n']));
+                        }
+
+                        // Else we don't know what happen
+                        else {
+                            Flash::error(__('sunlab.ssoclient::lang.errors.unknown'));
                         }
 
                         return;
                     }
 
+                    // Make sure the provider returned all the needed credentials, if not display unknown error
                     if (!isset($response['provider_url'], $response['secret'], $response['token_url_param'])) {
                         Flash::error(__('sunlab.ssoclient::lang.errors.unknown'));
                         return;
                     }
 
+                    // If everything is fine:
+                    // return the credentials to the form to update the form fields
                     return json_encode($response);
                 });
             }
