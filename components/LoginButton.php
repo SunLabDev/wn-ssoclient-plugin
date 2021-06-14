@@ -19,7 +19,7 @@ class LoginButton extends ComponentBase
     {
         $settings = Settings::instance();
 
-        // If the request already contain the token, try to log-in the user
+        // If the request already contains the token, try to log the user in
         if (Request::has($settings->token_url_param)) {
             try {
                 $token = Request::get($settings->token_url_param);
