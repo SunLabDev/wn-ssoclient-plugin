@@ -1,7 +1,7 @@
 <?php return [
     'plugin' => [
         'name' => 'SSO Client',
-        'desc' => 'Allows your website to use the user-base from another website.'
+        'desc' => 'Allows your website to use the userbase from another website.'
     ],
 
     'settings' => [
@@ -17,6 +17,7 @@
         'login_button' => [
             'name' => 'Login button',
             'desc' => 'Display the SSO Login button',
+            'label' => 'Login via SSO',
         ]
     ],
 
@@ -26,7 +27,7 @@
         'login_page' => 'Login page',
         'login_page_comment' => 'Will be sent to the provider as the callback url.',
         'provider_host' => 'Provider host',
-        'provider_host_comment' => 'Domain name of the provider, eg. https://wintercms.com',
+        'provider_host_comment' => 'Domain name of the provider; eg. https://wintercms.com',
         'get_client_credentials' => '',
         'get_client_credentials_comment' => 'Will ask the provider to get your credentials',
         'provider_url' => "Provider's url",
