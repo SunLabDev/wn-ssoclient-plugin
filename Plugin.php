@@ -47,7 +47,7 @@ class Plugin extends PluginBase
             $model = $formWidget->model;
 
             if ($model instanceof \SunLab\SSOClient\Models\Settings) {
-                $controller->addDynamicMethod('onGetSecretKey', static function () use ($formWidget, $model) {
+                $controller->addDynamicMethod('onGetSecretKey', function () use ($formWidget, $model) {
                     return $this->onGetSecretKey($formWidget, $model);
                 });
             }
